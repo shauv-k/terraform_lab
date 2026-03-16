@@ -1,2 +1,2 @@
 # terraform_lab
-Assignment Repository
+Repository for lab assignment
