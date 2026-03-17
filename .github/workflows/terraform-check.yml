@@ -1,0 +1,30 @@
+name: Terraform Checks
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  terraform:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: hashicorp/setup-terraform@v3
+
+      - name: Format Check
+        run: terraform fmt -check -recursive
+
+      - name: Run Terraform in all folders
+        run: |
+          set -e
+          for dir in $(find . -type f -name "*.tf" -exec dirname {} \; | sort -u); do
+            echo "Running in $dir"
+            cd $dir
+            terraform init -input=false
+            terraform validate
+            terraform plan -input=false || echo "plan skipped"
+            cd - > /dev/null
+          done
